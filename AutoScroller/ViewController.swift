@@ -9,7 +9,7 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    
     @IBOutlet weak var sliderCollectionView: UICollectionView!
     @IBOutlet weak var pageView: UIPageControl!
     
@@ -24,40 +24,15 @@ class ViewController: UIViewController {
                     UIImage(named:"Jessica Alba") ,
                     UIImage(named:"Scarlett Johansson") ]
     
-    var timer = Timer()
     var counter = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         pageView.numberOfPages = imgArr.count
         pageView.currentPage = 0
-        DispatchQueue.main.async {
-            self.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(self.changeImage), userInfo: nil, repeats: true)
-        }
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-   @objc func changeImage() {
-    
-    if counter < imgArr.count {
-        let index = IndexPath.init(item: counter, section: 0)
-        self.sliderCollectionView.scrollToItem(at: index, at: .centeredHorizontally, animated: true)
-        pageView.currentPage = counter
-        counter += 1
-    } else {
-        counter = 0
-        let index = IndexPath.init(item: counter, section: 0)
-        self.sliderCollectionView.scrollToItem(at: index, at: .centeredHorizontally, animated: false)
-        pageView.currentPage = counter
-        counter = 1
-    }
+        sliderCollectionView.isUserInteractionEnabled = true
         
     }
-
 }
 
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -92,4 +67,17 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0.0
     }
+}
+
+extension ViewController: UIScrollViewDelegate {
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        
+        pageView?.currentPage = Int(scrollView.contentOffset.x) / Int(scrollView.frame.width)
+    }
+    
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        
+        pageView?.currentPage = Int(scrollView.contentOffset.x) / Int(scrollView.frame.width)
+    }
+    
 }
